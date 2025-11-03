@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard | BidUp</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">BidUp</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="#" id="logoutBtn">Logout</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1>Welcome to Your Dashboard</h1>
+    <p>View available auctions and place your bids.</p>
+  </header>
+
+  <section class="auction-controls">
+  <button id="openAuctionForm">+ Auction an Item</button>
+</section>
+
+<div id="auctionFormModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Auction a New Item</h2>
+    <form id="auctionForm" enctype="multipart/form-data">
+      <label>Item Title:</label>
+      <input type="text" name="title" required>
+
+      <label>Description:</label>
+      <textarea name="description" rows="3" required></textarea>
+
+      <label>Category:</label>
+      <input type="text" name="category" required>
+
+      <label>Starting Price (₱):</label>
+      <input type="number" name="starting_price" step="0.01" min="0" required>
+
+      <label>Image:</label>
+      <input type="file" name="image" accept="image/*">
+
+      <button type="submit">Submit Item</button>
+      <button type="button" id="closeAuctionForm">Cancel</button>
+    </form>
+  </div>
+</div>
+
+
+  <section class="search-sort">
+    <input type="text" id="searchBox" placeholder="Search item...">
+    <select id="sortSelect">
+      <option value="latest">Sort by Latest</option>
+      <option value="priceAsc">Price: Low to High</option>
+      <option value="priceDesc">Price: High to Low</option>
+    </select>
+  </section>
+
+  <main id="itemList" class="item-list"></main>
+
+  <footer class="footer">
+    <p>© 2025 BidUp Auction System</p>
+  </footer>
+
+  <script>
+    let user = JSON.parse(sessionStorage.getItem("user"));
+    let allItems = [];
+
+    if (!user) {
+      alert("Please log in first.");
+      window.location.href = "login.html";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchItems();
+      document.getElementById("logoutBtn").addEventListener("click", logout);
+      document.getElementById("searchBox").addEventListener("input", filterItems);
+      document.getElementById("sortSelect").addEventListener("change", sortItems);
+    });
+
+    async function fetchItems() {
+      try {
+        const response = await fetch("get_items.php");
+        const data = await response.json();
+        if (data.success) {
+          allItems = data.data;
+          displayItems(allItems);
+        } else {
+          document.getElementById("itemList").innerHTML = "<p>No items found.</p>";
+        }
+      } catch (err) {
+        console.error("Error loading items:", err);
+      }
+    }
+
+    function displayItems(items) {
+      const list = document.getElementById("itemList");
+      list.innerHTML = "";
+
+      if (items.length === 0) {
+        list.innerHTML = "<p>No items available.</p>";
+        return;
+      }
+
+      items.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item-card";
+        div.innerHTML = `
+          <img src="${item.image_path || 'placeholder.png'}" alt="${item.title}">
+          <h3>${item.title}</h3>
+          <p>${item.description}</p>
+          <p class="price">₱${parseFloat(item.current_price).toFixed(2)}</p>
+          <p class="status">${item.status.toUpperCase()}</p>
+          ${
+            item.status === "active"
+              ? `<input type="number" id="bid_${item.item_id}" placeholder="Enter bid" min="${item.current_price}" />
+                 <button onclick="placeBid(${item.item_id})">Place Bid</button>`
+              : `<button disabled>Ended</button>`
+          }
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function filterItems() {
+      const query = document.getElementById("searchBox").value.toLowerCase();
+      const filtered = allItems.filter(i =>
+        i.title.toLowerCase().includes(query) ||
+        i.category.toLowerCase().includes(query)
+      );
+      displayItems(filtered);
+    }
+
+    function sortItems() {
+      const sortBy = document.getElementById("sortSelect").value;
+      let sorted = [...allItems];
+
+      if (sortBy === "priceAsc") sorted.sort((a, b) => a.current_price - b.current_price);
+      else if (sortBy === "priceDesc") sorted.sort((a, b) => b.current_price - a.current_price);
+      else sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      displayItems(sorted);
+    }
+
+    async function placeBid(itemId) {
+      const bidInput = document.getElementById(`bid_${itemId}`);
+      const bidAmount = parseFloat(bidInput.value);
+
+      if (!bidAmount || bidAmount <= 0) {
+        alert("Please enter a valid bid amount.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("item_id", itemId);
+      formData.append("user_id", user.user_id);
+      formData.append("bid_amount", bidAmount);
+
+      try {
+        const response = await fetch("place_bid.php", {
+          method: "POST",
+          body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          alert("Bid placed successfully!");
+          fetchItems();
+        } else {
+          alert(data.error);
+        }
+      } catch (err) {
+        alert("Server error while placing bid.");
+      }
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      window.location.href = "index.html";
+    }
+
+    // Auction item modal logic
+document.getElementById("openAuctionForm").addEventListener("click", () => {
+  document.getElementById("auctionFormModal").classList.remove("hidden");
+});
+
+document.getElementById("closeAuctionForm").addEventListener("click", () => {
+  document.getElementById("auctionFormModal").classList.add("hidden");
+});
+
+// Submit auction form
+document.getElementById("auctionForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  formData.append("user_id", user.user_id);
+
+  try {
+    const response = await fetch("add_item.php", {
+      method: "POST",
+      body: formData
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      alert("Item submitted successfully! Waiting for admin approval.");
+      document.getElementById("auctionFormModal").classList.add("hidden");
+      e.target.reset();
+      fetchItems();
+    } else {
+      alert(data.error);
+    }
+  } catch (err) {
+    alert("Server error while submitting item.");
+  }
+});
+
+  </script>
+</body>
+</html>
