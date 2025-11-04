@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | BidUp</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <nav class="navbar">
@@ -51,7 +51,7 @@
 
     async function fetchItems() {
       try {
-        const response = await fetch("admin_get_items.php");
+        const response = await fetch("/admin/admin_get_items.php");
         const data = await response.json();
 
         if (data.success) {
@@ -105,7 +105,7 @@
       formData.append("action", action);
 
       try {
-        const response = await fetch("update_item_status.php", {
+        const response = await fetch("/admin/update_item_status.php", {
           method: "POST",
           body: formData
         });

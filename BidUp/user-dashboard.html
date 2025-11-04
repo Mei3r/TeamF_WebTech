@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Dashboard | BidUp</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <nav class="navbar">
@@ -71,7 +71,7 @@
 
     if (!user) {
       alert("Please log in first.");
-      window.location.href = "login.html";
+      window.location.href = "login/login.html";
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -83,7 +83,7 @@
 
     async function fetchItems() {
       try {
-        const response = await fetch("get_items.php");
+        const response = await fetch("/user/get_items.php");
         const data = await response.json();
         if (data.success) {
           allItems = data.data;
@@ -160,7 +160,7 @@
       formData.append("bid_amount", bidAmount);
 
       try {
-        const response = await fetch("place_bid.php", {
+        const response = await fetch("/user/place_bid.php", {
           method: "POST",
           body: formData
         });
@@ -198,7 +198,7 @@ document.getElementById("auctionForm").addEventListener("submit", async (e) => {
   formData.append("user_id", user.user_id);
 
   try {
-    const response = await fetch("add_item.php", {
+    const response = await fetch("/user/add_item.php", {
       method: "POST",
       body: formData
     });

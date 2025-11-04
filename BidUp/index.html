@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BidUp | Online Auction</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <nav class="navbar">
@@ -47,7 +47,7 @@
 
     async function fetchItems() {
       try {
-        const response = await fetch("get_items.php");
+        const response = await fetch("/user/get_items.php");
         const data = await response.json();
         if (data.success) {
           allItems = data.data;
