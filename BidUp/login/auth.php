@@ -1,5 +1,6 @@
 <?php
 // auth.php
+session_start();
 header('Content-Type: application/json');
 require_once 'config.php';
 
@@ -23,8 +24,8 @@ if ($result->num_rows === 0) {
 
 $user = $result->fetch_assoc();
 
+// Since your database uses plain passwords (no hashing yet)
 if ($password === $user['password']) {
-    session_start();
     $_SESSION['user'] = [
         'user_id' => $user['user_id'],
         'username' => $user['username'],

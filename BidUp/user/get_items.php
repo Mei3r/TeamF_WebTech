@@ -3,10 +3,18 @@ header('Content-Type: application/json');
 require_once 'config.php';
 
 try {
-    $query = "SELECT item_id, title, description, image_path, category, current_price, status, created_at 
-              FROM items 
-              WHERE status IN ('active', 'ended', 'approved')
-              ORDER BY created_at DESC";
+    $query = "
+        SELECT i.item_id, i.title, i.description, i.image_path, i.category,
+               i.starting_price, i.current_price, i.status, i.created_at,
+               i.owner_id, i.winner_id,
+               u.full_name as owner_name,
+               w.full_name as winner_name
+        FROM items i
+        JOIN users u ON i.owner_id = u.user_id
+        LEFT JOIN users w ON i.winner_id = w.user_id
+        WHERE i.status IN ('active', 'ended', 'approved')
+        ORDER BY i.created_at DESC
+    ";
               
     $result = $conn->query($query);
 

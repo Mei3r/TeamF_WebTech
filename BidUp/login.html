@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | BidUp</title>
-  <link rel="stylesheet" href="assets\style.css">
+  <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
   <nav class="navbar">
@@ -32,10 +32,6 @@
     </form>
   </main>
 
-  <footer class="footer">
-    <p>© 2025 BidUp Auction System</p>
-  </footer>
-
   <script>
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -45,7 +41,7 @@
       formData.append("password", document.getElementById("password").value);
 
       try {
-        const response = await fetch("/login/auth.php", {
+        const response = await fetch("auth.php", {
           method: "POST",
           body: formData
         });
@@ -54,7 +50,6 @@
         if (data.success) {
   sessionStorage.setItem("user", JSON.stringify(data.user));
 
-  // Redirect based on user type
   if (data.user.user_type === "admin") {
     window.location.href = "admin-dashboard.html";
   } else {
