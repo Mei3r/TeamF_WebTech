@@ -1,68 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login | BidUp</title>
-  <link rel="stylesheet" href="styles/style.css">
-</head>
-<body>
-  <nav class="navbar">
-    <div class="nav-brand">BidUp</div>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-    </div>
-  </nav>
-
-  <main class="login-container">
-    <h2>Login to BidUp</h2>
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | BidUp</title>
+    <link rel="stylesheet" href="CSS/style.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-brand">BidUp</div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
       </div>
+    </nav>
 
-      <div class="form-group">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-      </div>
+    <main class="login-container">
+      <h2>Login to BidUp</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" required />
+        </div>
 
-      <button type="submit">Login</button>
-      <p id="message" class="error"></p>
-    </form>
-  </main>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required />
+        </div>
 
-  <script>
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+        <button type="submit">Login</button>
+        <p id="message" class="error"></p>
+      </form>
+    </main>
 
-      const formData = new FormData();
-      formData.append("username", document.getElementById("username").value);
-      formData.append("password", document.getElementById("password").value);
-
-      try {
-        const response = await fetch("auth.php", {
-          method: "POST",
-          body: formData
-        });
-        const data = await response.json();
-
-        if (data.success) {
-  sessionStorage.setItem("user", JSON.stringify(data.user));
-
-  if (data.user.user_type === "admin") {
-    window.location.href = "admin-dashboard.html";
-  } else {
-    window.location.href = "user-dashboard.html";
-  }
-} else {
-  document.getElementById("message").textContent = data.error || "Invalid login.";
-}
-
-      } catch (err) {
-        document.getElementById("message").textContent = "Server error. Try again later.";
-      }
-    });
-  </script>
-</body>
+    <script src="JS/login.js" defer></script>
+  </body>
 </html>
