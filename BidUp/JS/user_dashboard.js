@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function fetchAllItems() {
   try {
-    const response = await fetch("get_items.php");
+    const response = await fetch("PHP/get_items.php");
     const data = await response.json();
     if (data.success) {
       allItems = data.data;
@@ -78,7 +78,7 @@ async function fetchAllItems() {
 
 async function fetchMyItems() {
   try {
-    const response = await fetch("get_my_items.php");
+    const response = await fetch("PHP/get_my_items.php");
     const data = await response.json();
     if (data.success) {
       myItems = data.data;
@@ -94,7 +94,7 @@ async function fetchMyItems() {
 
 async function fetchWonItems() {
   try {
-    const response = await fetch("get_won_items.php");
+    const response = await fetch("PHP/get_won_items.php");
     const data = await response.json();
     if (data.success) {
       wonItems = data.data;
@@ -306,7 +306,7 @@ async function endMyAuction(itemId) {
   formData.append("action", "end");
 
   try {
-    const response = await fetch("update_item_status.php", {
+    const response = await fetch("PHP/update_item_status.php", {
       method: "POST",
       body: formData,
     });
@@ -339,7 +339,7 @@ async function placeBid(itemId) {
   formData.append("bid_amount", bidAmount);
 
   try {
-    const response = await fetch("place_bid.php", {
+    const response = await fetch("PHP/place_bid.php", {
       method: "POST",
       body: formData,
     });
@@ -362,7 +362,7 @@ async function submitAuction(e) {
   formData.append("user_id", user.user_id);
 
   try {
-    const response = await fetch("add_item.php", {
+    const response = await fetch("PHP/add_item.php", {
       method: "POST",
       body: formData,
     });
@@ -410,7 +410,7 @@ async function processPayment(e) {
   const formData = new FormData(e.target);
 
   try {
-    const response = await fetch("process_payment.php", {
+    const response = await fetch("PHP/process_payment.php", {
       method: "POST",
       body: formData,
     });
@@ -438,7 +438,7 @@ async function processPayment(e) {
 
 async function viewBidders(itemId) {
   try {
-    const response = await fetch(`get_bidders.php?item_id=${itemId}`);
+    const response = await fetch(`PHP/get_bidders.php?item_id=${itemId}`);
     const data = await response.json();
 
     if (data.success) {

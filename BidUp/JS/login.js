@@ -6,7 +6,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   formData.append("password", document.getElementById("password").value);
 
   try {
-    const response = await fetch("auth.php", {
+    const response = await fetch("PHP/auth.php", {
       method: "POST",
       body: formData,
     });

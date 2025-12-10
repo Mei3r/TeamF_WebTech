@@ -22,7 +22,7 @@ if (!in_array($category, $valid_categories)) {
 
 $image_path = null;
 if (!empty($_FILES['image']['name'])) {
-    $target_dir = "uploads/";
+    $target_dir = "../uploads/";
     if (!is_dir($target_dir)) mkdir($target_dir);
     $file_name = time() . "_" . basename($_FILES['image']['name']);
     $target_file = $target_dir . $file_name;

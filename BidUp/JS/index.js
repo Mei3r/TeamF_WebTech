@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function fetchItems() {
   try {
-    const response = await fetch("get_items.php");
+    const response = await fetch("PHP/get_items.php");
     const data = await response.json();
     if (data.success) {
       allItems = data.data;
