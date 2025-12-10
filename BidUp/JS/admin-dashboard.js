@@ -4,7 +4,7 @@ let currentCategory = "all";
 
 if (!user || user.user_type !== "admin") {
   alert("Access denied. Admins only.");
-  window.location.href = "login.html";
+  window.location.href = "./login.html";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function fetchItems() {
   try {
-    const response = await fetch("admin_get_items.php");
+    const response = await fetch("PHP/admin_get_items.php");
     const data = await response.json();
 
     if (data.success) {
@@ -104,7 +104,7 @@ async function updateItem(itemId, action) {
   formData.append("action", action);
 
   try {
-    const response = await fetch("update_item_status.php", {
+    const response = await fetch("PHP/update_item_status.php", {
       method: "POST",
       body: formData,
     });
@@ -139,12 +139,12 @@ function filterItems() {
 
 function logout() {
   sessionStorage.clear();
-  window.location.href = "index.html";
+  window.location.href = "./index.html";
 }
 
 async function viewBidders(itemId) {
   try {
-    const response = await fetch(`get_bidders.php?item_id=${itemId}`);
+    const response = await fetch(`PHP/get_bidders.php?item_id=${itemId}`);
     const data = await response.json();
 
     if (data.success) {
